@@ -26,8 +26,8 @@ app.use(cors()) // Cross Origin Resource Sharing
 app.use(express.json())
 app.use(cookieParser())
 app.use('/', require('./routes/routes'))
-/* app.use('/auth', require('./routes/authRoutes.js'))
-app.use('/users', require('./routes/userRoutes.js')) */
+app.use('/auth', require('./routes/authRoutes'))
+app.use('/users', require('./routes/usersRoutes'))
 app.use('/', express.static(path.join(__dirname, 'public')))
 
 app.get('/', (req, res) => res.send('NodeJs Jwt BackEnd!'))
