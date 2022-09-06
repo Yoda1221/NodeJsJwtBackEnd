@@ -4,20 +4,24 @@ const User      = require('../models/User')
 
 const login = async (req, res) => {
     const cookies = req.cookies
-
     const { userName, password } = req.body
+
     if (!userName || !password) 
         return res.status(400).json({ message: 'USERNAME AND PASSWORD ARE REQUIRED!' })
 
     const foundUser = await User.findOne({ userName }).exec()
-    if (!foundUser) return res.sendStatus(401) //Unauthorized 
+
+    if (!foundUser) return res.sendStatus(401).json({ message: 'Unauthorized' })
+
     const match = await bcrypt.compare(password, foundUser.password)
+    
     if (match) {
         const roles = Object.values(foundUser.roles).filter(Boolean)
+        console.log('FUR ', foundUser.roles)
         const accessToken = jwt.sign({
                 "UserInfo": {
                     "userName": foundUser.userName,
-                    "roles": roles
+                    "roles": foundUser.roles
                 }
             },
             process.env.ACCTOKENSECRET,
@@ -28,14 +32,13 @@ const login = async (req, res) => {
             process.env.REFTOKENSECRET,
             { expiresIn: '7d' }
         )
+                
+        let newRefreshTokenArray = !cookies?.NodeJsJwtBackEnd
+            ? foundUser.refreshToken
+            : foundUser.refreshToken.filter(rt => rt !== cookies.NodeJsJwtBackEnd)
 
-        let newRefreshTokenArray =
-            !cookies?.jwt
-                ? foundUser.refreshToken
-                : foundUser.refreshToken.filter(rt => rt !== cookies.jwt)
-
-        if (cookies?.jwt) {
-            const refreshToken = cookies.jwt
+        if (cookies?.NodeJsJwtBackEnd) {
+            const refreshToken = cookies.NodeJsJwtBackEnd
             const foundToken = await User.findOne({ refreshToken }).exec()
 
             if (!foundToken) newRefreshTokenArray = []

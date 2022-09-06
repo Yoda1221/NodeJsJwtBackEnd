@@ -22,7 +22,7 @@ dbConnect()
 
 app.use(logger)
 app.use(errorHandler)
-app.use(cors()) // Cross Origin Resource Sharing
+app.use(cors(corsOptions)) // Cross Origin Resource Sharing
 app.use(express.json())
 app.use(cookieParser())
 app.use('/', require('./routes/routes'))

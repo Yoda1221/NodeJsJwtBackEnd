@@ -1,23 +1,30 @@
 const mongoose  = require('mongoose')
-const Schema    = mongoose.Schema
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: true
     },
-    roles: {
-        User: {
-            type: Number,
-            default: 2001
-        },
-        Editor: Number,
-        Admin: Number
+    email: {
+        type: String,
+        require: true
     },
     password: {
         type: String,
         required: true
     },
+    roles: [{
+        User: {
+            type: Number,
+            default: 2001
+        },
+        Editor: {
+            Number
+        },
+        Admin: {
+            Number
+        }
+    }],
     refreshToken: [String]
 })
 
